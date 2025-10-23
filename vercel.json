@@ -1,22 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/api/translate",
-      "destination": "/api/translate.py"
-    },
-    {
-      "source": "/api/process_job",
-      "destination": "/api/process_job.py"
-    },
-    {
-      "source": "/api/download",
-      "destination": "/api/download.py"
-    },
-    {
-      "source": "/api/status",
-      "destination": "/api/status.py"
-    },
-    {
       "source": "/static/(.*)",
       "destination": "/static/$1"
     },
@@ -24,15 +8,5 @@
       "source": "/",
       "destination": "/templates/index.html"
     }
-  ],
-  "functions": {
-    "api/*.py": {
-      "memory": 1024,
-      "maxDuration": 60
-    },
-    "api/process_job.py": {
-      "memory": 2048,
-      "maxDuration": 60
-    }
-  }
+  ]
 }
