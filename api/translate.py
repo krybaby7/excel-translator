@@ -6,15 +6,12 @@ from http.server import BaseHTTPRequestHandler
 import json
 import os
 import uuid
-from urllib.parse import parse_qs
-from supabase import create_client, Client
-import tempfile
+import requests
 import base64
 
-# Initialize Supabase client
+# Initialize Supabase connection
 SUPABASE_URL = os.environ.get("SUPABASE_URL")
 SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
 class handler(BaseHTTPRequestHandler):
@@ -54,30 +51,24 @@ class handler(BaseHTTPRequestHandler):
             job_id = str(uuid.uuid4())
             input_path = f"input/{job_id}/{filename}"
 
-            # Upload file to Supabase Storage
+            # Upload file to Supabase Storage using REST API
             try:
-                # Write to temporary file in /tmp (writable in serverless)
-                temp_path = f"/tmp/{job_id}_{filename}"
-                with open(temp_path, 'wb') as f:
-                    f.write(file_content)
+                storage_url = f"{SUPABASE_URL}/storage/v1/object/excel-files/{input_path}"
+                headers = {
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                    "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                }
 
-                # Upload from temporary file
-                with open(temp_path, 'rb') as f:
-                    upload_result = supabase.storage.from_("excel-files").upload(
-                        input_path,
-                        f,
-                        file_options={
-                            "content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                        }
-                    )
+                upload_response = requests.post(storage_url, data=file_content, headers=headers)
 
-                # Clean up temp file
-                os.remove(temp_path)
+                if upload_response.status_code not in [200, 201]:
+                    raise Exception(f"Storage upload failed: {upload_response.text}")
+
             except Exception as e:
                 self.send_error_response(500, f"Failed to upload file: {str(e)}")
                 return
 
-            # Create translation job record in database
+            # Create translation job record in database using REST API
             try:
                 job_data = {
                     "id": job_id,
@@ -90,17 +81,24 @@ class handler(BaseHTTPRequestHandler):
                     "progress_message": "Queued for translation..."
                 }
 
-                result = supabase.table("translation_jobs").insert(job_data).execute()
+                db_url = f"{SUPABASE_URL}/rest/v1/translation_jobs"
+                headers = {
+                    "Authorization": f"Bearer {SUPABASE_KEY}",
+                    "apikey": SUPABASE_KEY,
+                    "Content-Type": "application/json",
+                    "Prefer": "return=minimal"
+                }
+
+                db_response = requests.post(db_url, json=job_data, headers=headers)
+
+                if db_response.status_code not in [200, 201]:
+                    # Clean up uploaded file if DB insert fails
+                    requests.delete(storage_url, headers={"Authorization": f"Bearer {SUPABASE_KEY}"})
+                    raise Exception(f"Database insert failed: {db_response.text}")
 
             except Exception as e:
-                # Clean up uploaded file if DB insert fails
-                supabase.storage.from_("excel-files").remove([input_path])
                 self.send_error_response(500, f"Failed to create job: {str(e)}")
                 return
-
-            # Trigger background translation (via separate endpoint or queue)
-            # For now, we'll return the job_id and let the client poll/subscribe
-            # In production, you'd trigger a background worker here
 
             # Send success response
             self.send_response(202)
