@@ -10,9 +10,9 @@ import tempfile
 from supabase import create_client, Client
 from excel_translator import convert_xls_to_xlsx, translate_excel_with_format
 
-# Initialize Supabase client
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")
+# Initialize Supabase client (strip any whitespace/newlines)
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "").strip()
+SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "").strip()
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 

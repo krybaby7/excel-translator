@@ -9,9 +9,9 @@ import uuid
 import requests
 import base64
 
-# Initialize Supabase connection
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")
+# Initialize Supabase connection (strip any whitespace/newlines)
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "").strip()
+SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "").strip()
 
 
 class handler(BaseHTTPRequestHandler):
