@@ -1,0 +1,11 @@
+pandas
+openpyxl
+deep-translator
+xlrd
+flask
+flask-cors
+pytest
+pytest-flask
+pytest-cov
+pytest-benchmark
+requests

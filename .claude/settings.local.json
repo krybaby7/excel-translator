@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Bash(pip install:*)",
+      "Bash(dir:*)",
+      "Bash(pytest:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(mcp__supabase:*)",
+      "Bash(env)",
+      "Bash(compgen -c)",
+      "Read(//c/Users/adami/**)",
+      "Bash(claude mcp:*)",
+      "mcp__supabase__*",
+      "Bash(timeout:*)",
+      "Bash(curl:*)",
+      "WebSearch",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,6 @@
+# Requirements for Vercel Serverless Functions
+openpyxl==3.1.2
+deep-translator==1.11.4
+xlrd==2.0.1
+supabase==2.3.0
+postgrest==0.16.0

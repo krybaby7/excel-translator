@@ -1,0 +1,58 @@
+{
+  "version": 2,
+  "name": "excel-translator",
+  "builds": [
+    {
+      "src": "api/**/*.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "static/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "templates/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/translate",
+      "dest": "/api/translate.py"
+    },
+    {
+      "src": "/api/process_job",
+      "dest": "/api/process_job.py"
+    },
+    {
+      "src": "/api/download",
+      "dest": "/api/download.py"
+    },
+    {
+      "src": "/api/status",
+      "dest": "/api/status.py"
+    },
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/templates/index.html"
+    }
+  ],
+  "env": {
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_SERVICE_KEY": "@supabase_service_key"
+  },
+  "functions": {
+    "api/*.py": {
+      "memory": 1024,
+      "maxDuration": 60
+    },
+    "api/process_job.py": {
+      "memory": 3008,
+      "maxDuration": 300
+    }
+  }
+}
