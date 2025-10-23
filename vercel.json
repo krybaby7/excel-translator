@@ -1,50 +1,30 @@
 {
-  "version": 2,
-  "name": "excel-translator",
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/**/*.py",
-      "use": "@vercel/python"
+      "source": "/api/translate",
+      "destination": "/api/translate.py"
     },
     {
-      "src": "static/**",
-      "use": "@vercel/static"
+      "source": "/api/process_job",
+      "destination": "/api/process_job.py"
     },
     {
-      "src": "templates/**",
-      "use": "@vercel/static"
+      "source": "/api/download",
+      "destination": "/api/download.py"
+    },
+    {
+      "source": "/api/status",
+      "destination": "/api/status.py"
+    },
+    {
+      "source": "/static/(.*)",
+      "destination": "/static/$1"
+    },
+    {
+      "source": "/",
+      "destination": "/templates/index.html"
     }
   ],
-  "routes": [
-    {
-      "src": "/api/translate",
-      "dest": "/api/translate.py"
-    },
-    {
-      "src": "/api/process_job",
-      "dest": "/api/process_job.py"
-    },
-    {
-      "src": "/api/download",
-      "dest": "/api/download.py"
-    },
-    {
-      "src": "/api/status",
-      "dest": "/api/status.py"
-    },
-    {
-      "src": "/static/(.*)",
-      "dest": "/static/$1"
-    },
-    {
-      "src": "/",
-      "dest": "/templates/index.html"
-    }
-  ],
-  "env": {
-    "SUPABASE_URL": "@supabase_url",
-    "SUPABASE_SERVICE_KEY": "@supabase_service_key"
-  },
   "functions": {
     "api/*.py": {
       "memory": 1024,
