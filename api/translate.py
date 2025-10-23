@@ -56,13 +56,23 @@ class handler(BaseHTTPRequestHandler):
 
             # Upload file to Supabase Storage
             try:
-                upload_result = supabase.storage.from_("excel-files").upload(
-                    input_path,
-                    file_content,
-                    file_options={
-                        "content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    }
-                )
+                # Write to temporary file in /tmp (writable in serverless)
+                temp_path = f"/tmp/{job_id}_{filename}"
+                with open(temp_path, 'wb') as f:
+                    f.write(file_content)
+
+                # Upload from temporary file
+                with open(temp_path, 'rb') as f:
+                    upload_result = supabase.storage.from_("excel-files").upload(
+                        input_path,
+                        f,
+                        file_options={
+                            "content-type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        }
+                    )
+
+                # Clean up temp file
+                os.remove(temp_path)
             except Exception as e:
                 self.send_error_response(500, f"Failed to upload file: {str(e)}")
                 return
