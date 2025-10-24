@@ -8,7 +8,7 @@ import json
 import os
 import tempfile
 from supabase import create_client, Client
-from excel_translator import convert_xls_to_xlsx, translate_excel_with_format
+from excel_translator_optimized import convert_xls_to_xlsx, translate_excel_with_format
 
 # Initialize Supabase client (strip any whitespace/newlines)
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "").strip()
