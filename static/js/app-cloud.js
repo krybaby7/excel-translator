@@ -105,10 +105,11 @@ class ExcelTranslatorCloud {
             return;
         }
 
-        // Validate file size (16MB max)
-        const maxSize = 16 * 1024 * 1024;
+        // Validate file size (4.5MB max for free tier)
+        // Vercel free tier has 4.5MB request body limit
+        const maxSize = 4.5 * 1024 * 1024;
         if (file.size > maxSize) {
-            this.showError('File size must be less than 16MB');
+            this.showError('File size must be less than 4.5MB (Upgrade for larger files)');
             return;
         }
 
